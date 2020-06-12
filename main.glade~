@@ -43,27 +43,7 @@
           <packing>
             <property name="left_attach">1</property>
             <property name="top_attach">5</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="width_request">140</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">0 - S,Z
-1 - T,D
-2 - N
-3 - M
-4 - R
-5 - L
-6 - J, Ch, Sh
-7 - K, G
-8 - F, V
-9 - P, B</property>
-          </object>
-          <packing>
-            <property name="left_attach">2</property>
-            <property name="top_attach">5</property>
+            <property name="width">2</property>
           </packing>
         </child>
         <child>
@@ -136,6 +116,24 @@
             <property name="left_attach">1</property>
             <property name="top_attach">2</property>
           </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <placeholder/>
         </child>
         <child>
           <placeholder/>

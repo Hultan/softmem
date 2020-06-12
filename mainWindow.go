@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
+	memodatabase "github.com/hultan/softmemo/database"
 	gtkhelper "github.com/hultan/softteam/gtk"
 	"math/rand"
 	"os"
@@ -14,7 +15,7 @@ import (
 
 type MainWindow struct {
 	window        *gtk.ApplicationWindow
-	database      *database
+	database      *memodatabase.Database
 	PEG           map[string]string
 	currentNumber string
 	currentWord   string
@@ -32,7 +33,7 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 	gtk.Init(&os.Args)
 
 	// Create a new gtk helper
-	helper := gtkhelper.GtkHelperNewFromFile("main.glade")
+	helper := gtkhelper.GtkHelperNewFromFile("resources/main.glade")
 	// Get the main window from the glade file
 	mainWindow, err := helper.GetApplicationWindow("main_window")
 	errorCheck(err)
@@ -41,7 +42,7 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 
 	// Set up main window
 	mainWindow.SetApplication(app)
-	mainWindow.SetTitle("SoftTeam Memo v. 1.0")
+	mainWindow.SetTitle(applicationTitle)
 	//mainWindow.SetDefaultSize(800, 600)
 
 	// Hook up the destroy event
@@ -61,7 +62,7 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 	errorCheck(err)
 
 	// Load PEGs
-	m.database = new(database)
+	m.database = new(memodatabase.Database)
 	numbers, err := m.database.GetAllNumbers()
 	errorCheck(err)
 	for _, item := range numbers {
@@ -90,11 +91,8 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 		answer.SetText(result)
 		entry.SetText("")
 
-		if m.isSingle {
-			image.SetFromFile(fmt.Sprintf("images/single/%s.png", strings.Trim(m.currentNumber, " ")))
-		} else {
-			image.SetFromFile(fmt.Sprintf("images/double/%s.png", strings.Trim(m.currentNumber, " ")))
-		}
+		image.SetFromFile(m.GetImagePath())
+
 		upperLimit := upper.GetValueAsInt()
 		lowerLimit := lower.GetValueAsInt()
 		singleLimit := includeSingle.GetActive()
@@ -106,9 +104,12 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 	entry.Connect("key-press-event", func(entry *gtk.Entry, event *gdk.Event) {
 		keyEvent := gdk.EventKeyNewFromEvent(event)
 
-		if keyEvent.KeyVal() == 65470 {
+		if keyEvent.KeyVal() == keyValF1 {
 			hint.SetText(m.GetMnemonics(m.currentNumber))
+		} else if keyEvent.KeyVal() == keyValF2 {
+			entry.Activate()
 		}
+
 	})
 	entry.GrabFocus()
 
@@ -183,4 +184,20 @@ func (m *MainWindow) GetMnemonicsForNumber(number int) string {
 	case 9: return "P,B"
 	default: return ""
 	}
+}
+
+func (m *MainWindow) GetImagePath() string {
+	if m.isSingle {
+		return m.GetSingleImagePath()
+	} else {
+		return m.GetDoubleImagePath()
+	}
+}
+
+func (m *MainWindow) GetSingleImagePath() string {
+	return fmt.Sprintf("resources/images/single/%s.png", strings.Trim(m.currentNumber, " "))
+}
+
+func (m *MainWindow) GetDoubleImagePath() string {
+	return fmt.Sprintf("resources/images/double/%s.png", strings.Trim(m.currentNumber, " "))
 }
