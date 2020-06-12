@@ -5,11 +5,6 @@ type NumberTable struct {
 	Word   string `gorm:"column:word;size:20"`
 }
 
-type PEG struct {
-	Number string
-	Word   string
-}
-
 func (n *NumberTable) TableName() string {
 	return "numbers"
 }
