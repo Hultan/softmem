@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/hultan/softmemo/mainWindow"
 	"os"
 )
 
@@ -14,7 +15,7 @@ func main() {
 	app, err := gtk.ApplicationNew(ApplicationId, ApplicationFlags)
 	errorCheck(err)
 
-	mainWindow := NewMainWindow()
+	mainWindow := mainWindow.NewMainWindow()
 
 	// Hook up the activate event handler
 	app.Connect("activate", mainWindow.OpenMainWindow)

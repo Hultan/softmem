@@ -9,6 +9,17 @@ type Database struct {
 	db *gorm.DB
 }
 
+func (d *Database) UpdateStatistics(number NumberTable) error {
+	db, err := d.getDatabase()
+	if err != nil {
+		return err
+	}
+	if result := db.Save(number); result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
 func (d *Database) GetAllNumbers() ([]NumberTable, error) {
 	db, err := d.getDatabase()
 	if err != nil {
