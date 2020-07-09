@@ -6,6 +6,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	player "github.com/hultan/softmemo/sounds"
 	gtkhelper "github.com/hultan/softteam/gtk"
+	"github.com/hultan/softteam/messagebox"
 	"os"
 	"strconv"
 	"strings"
@@ -105,7 +106,19 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 }
 
 func (m *MainWindow) CloseMainWindow() {
-	m.picker.UpdateStatistics()
+
+	buttons := []messagebox.Button{{ "Absolutely!", gtk.RESPONSE_OK}, {"Hell no!", gtk.RESPONSE_CANCEL}}
+	box2 := messagebox.NewMessageBoxWithButtons("Update statistics?", "Do you want to update statistics?", m.window, buttons)
+
+	if box2.Warning() == gtk.RESPONSE_OK {
+		m.picker.UpdateStatistics()
+	}
+	//box := messagebox.NewMessageBox("Update statistics?", "Do you want to update statistics?", m.window)
+	//if box.QuestionYesNo() {
+	//	m.picker.UpdateStatistics()
+	//}
+
+
 	m.player.Close()
 }
 

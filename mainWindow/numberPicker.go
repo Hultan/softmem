@@ -9,9 +9,9 @@ import (
 )
 
 type NumberPicker struct {
-	database      *memoDatabase.Database
-	current       *memoDatabase.NumberTable
-	numbers       []memoDatabase.NumberTable
+	database *memoDatabase.Database
+	current  *memoDatabase.NumberTable
+	numbers  []memoDatabase.NumberTable
 }
 
 func NewNumberPicker() *NumberPicker {
@@ -31,28 +31,40 @@ func (n *NumberPicker) Initialize() {
 }
 
 func (n *NumberPicker) UpdateStatistics() {
-	for _,number := range n.numbers {
+	for _, number := range n.numbers {
 		if number.HasChanged {
-			err:=n.database.UpdateStatistics(number)
-			if err!=nil {
+			err := n.database.UpdateStatistics(number)
+			if err != nil {
 				fmt.Printf("Failed to update statistics for : %s", number.Number)
 			}
 		}
 	}
 }
 
+func (n *NumberPicker) limit(number int) int {
+	if number<1 {
+		return 1
+	}
+	if number>5 {
+		return 5
+	}
+
+	return number
+}
+
 func (n *NumberPicker) GetNextNumber() (string, error) {
 	_, low := n.getCorrectStatistics()
 	var values []string
 	for _, item := range n.numbers {
-		for i := 0; i < item.Correct-low+1; i++ {
+		count := item.Correct - low + 1
+		for i := 0; i < n.limit(count); i++ {
 			values = append(values, item.Number)
 		}
 	}
 
 	// get next number
 	length := len(values)
-	for ;; {
+	for {
 		next := rand.Intn(length)
 		nextNumber := values[next]
 		var currentNumber string
