@@ -18,7 +18,9 @@ func main() {
 	mainWindow := mainWindow.NewMainWindow()
 
 	// Hook up the activate event handler
-	app.Connect("activate", mainWindow.OpenMainWindow)
+	app.Connect("startup", mainWindow.OnStartup)
+	app.Connect("activate", mainWindow.OnActivate)
+	app.Connect("shutdown", mainWindow.OnShutdown)
 
 	// Start the application
 	status := app.Run(os.Args)

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
-	player "github.com/hultan/softmemo/sounds"
-	gtkhelper "github.com/hultan/softteam/gtk"
+	soundPlayer "github.com/hultan/softmemo/soundPlayer"
+	gtkHelper "github.com/hultan/softteam/gtk"
 	"github.com/hultan/softteam/messagebox"
 	"os"
 	"strconv"
@@ -13,11 +13,15 @@ import (
 )
 
 type MainWindow struct {
-	window *gtk.ApplicationWindow
-	picker *NumberPicker
-	player *player.Player
-	label  *gtk.Label
-	hint   *gtk.Label
+	window      *gtk.ApplicationWindow
+	helper      *gtkHelper.GtkHelper
+	soundPlayer *soundPlayer.SoundPlayer
+	picker      *NumberPicker
+	answer      *gtk.Label
+	image       *gtk.Image
+	entry       *gtk.Entry
+	label       *gtk.Label
+	hint        *gtk.Label
 }
 
 func NewMainWindow() *MainWindow {
@@ -25,16 +29,18 @@ func NewMainWindow() *MainWindow {
 	return mainWindow
 }
 
-func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
+func (m *MainWindow) OnStartup(app *gtk.Application) {
 	// Initialize gtk
 	gtk.Init(&os.Args)
 
 	// Create a new gtk helper
-	helper := gtkhelper.GtkHelperNewFromFile("resources/main.glade")
-	// Get the main window from the glade file
-	mainWindow, err := helper.GetApplicationWindow("main_window")
-	errorCheck(err)
+	m.helper = gtkHelper.GtkHelperNewFromFile("main.glade")
+}
 
+func (m *MainWindow) OnActivate(app *gtk.Application) {
+	// Get the main window from the glade file
+	mainWindow, err := m.helper.GetApplicationWindow("main_window")
+	errorCheck(err)
 	m.window = mainWindow
 
 	// Set up main window
@@ -43,71 +49,42 @@ func (m *MainWindow) OpenMainWindow(app *gtk.Application) {
 	mainWindow.SetDefaultSize(800, 600)
 
 	// Hook up the destroy event
-	mainWindow.Connect("destroy", func() {
-		m.CloseMainWindow()
-	})
+	m.window.Connect("destroy", m.closeMainWindow)
 
-	label, err := helper.GetLabel("memory_label")
-	answer, err := helper.GetLabel("answer")
-	entry, err := helper.GetEntry("memory_entry")
-	image, err := helper.GetImage("image")
-	hint, err := helper.GetLabel("hint_label")
-	m.label = label
-	m.hint = hint
-
-	errorCheck(err)
+	m.getGTKObjects()
 
 	picker := NewNumberPicker()
-	picker.Initialize()
 	m.picker = picker
 
-	player := player.NewPlayer()
-	player.Initialize()
-	m.player = player
+	player, err := soundPlayer.NewSoundPlayer()
+	errorCheck(err)
+	m.soundPlayer = player
 
 	m.getNextNumber()
 
-	entry.Connect("activate", func() {
-		var result = ""
-
-		text, err := entry.GetText()
-		errorCheck(err)
-		if strings.ToLower(m.picker.current.Word) == strings.ToLower(text) {
-			result = fmt.Sprintf("CORRECT : %s = %s", m.picker.current.Number, m.picker.current.Word)
-			m.picker.current.Correct += 1
-			player.PlayCorrect()
-		} else {
-			result = fmt.Sprintf("WRONG : %s = %s", m.picker.current.Number, m.picker.current.Word)
-			m.picker.current.Correct -= 1
-			player.PlayIncorrect()
-		}
-		m.picker.current.HasChanged = true
-		answer.SetText(result)
-		entry.SetText("")
-
-		image.SetFromFile(m.GetImagePath())
-
-		m.getNextNumber()
-	})
-
-	entry.Connect("key-press-event", func(entry *gtk.Entry, event *gdk.Event) {
-		keyEvent := gdk.EventKeyNewFromEvent(event)
-
-		if keyEvent.KeyVal() == keyValF1 {
-			hint.SetText(m.GetHint(m.picker.current.Number))
-		} else if keyEvent.KeyVal() == keyValF2 {
-			entry.Activate()
-		}
-	})
-	entry.GrabFocus()
+	m.entry.Connect("activate", m.onEntryActivate)
+	m.entry.Connect("key-press-event", m.onKeyPressed)
+	m.entry.GrabFocus()
 
 	// Show the main window
 	mainWindow.ShowAll()
 }
 
-func (m *MainWindow) CloseMainWindow() {
+func (m *MainWindow) OnShutdown(app *gtk.Application) {
+	m.window = nil
+	m.helper = nil
+	m.picker = nil
+	m.answer = nil
+	m.entry = nil
+	m.soundPlayer = nil
+	m.label = nil
+	m.hint = nil
+	m.image = nil
+}
 
-	buttons := []messagebox.Button{{ "Absolutely!", gtk.RESPONSE_OK}, {"Hell no!", gtk.RESPONSE_CANCEL}}
+func (m *MainWindow) closeMainWindow() {
+
+	buttons := []messagebox.Button{{"Absolutely!", gtk.RESPONSE_OK}, {"Hell no!", gtk.RESPONSE_CANCEL}}
 	box2 := messagebox.NewMessageBoxWithButtons("Update statistics?", "Do you want to update statistics?", m.window, buttons)
 
 	if box2.Warning() == gtk.RESPONSE_OK {
@@ -118,8 +95,55 @@ func (m *MainWindow) CloseMainWindow() {
 	//	m.picker.UpdateStatistics()
 	//}
 
+	m.soundPlayer.Close()
+}
 
-	m.player.Close()
+func (m *MainWindow) onEntryActivate() {
+	var result = ""
+
+	text, err := m.entry.GetText()
+	errorCheck(err)
+	if strings.ToLower(m.picker.current.Word) == strings.ToLower(text) {
+		result = fmt.Sprintf("CORRECT : %s = %s", m.picker.current.Number, m.picker.current.Word)
+		m.picker.current.Correct += 1
+		m.soundPlayer.PlayCorrect()
+	} else {
+		result = fmt.Sprintf("WRONG : %s = %s", m.picker.current.Number, m.picker.current.Word)
+		m.picker.current.Correct -= 1
+		m.soundPlayer.PlayIncorrect()
+	}
+	m.picker.current.HasChanged = true
+	m.answer.SetText(result)
+	m.entry.SetText("")
+
+	m.image.SetFromFile(m.getImagePath())
+
+	m.getNextNumber()
+}
+
+func (m *MainWindow) onKeyPressed(entry *gtk.Entry, event *gdk.Event) {
+	keyEvent := gdk.EventKeyNewFromEvent(event)
+
+	if keyEvent.KeyVal() == keyValF1 {
+		m.hint.SetText(m.getHint(m.picker.current.Number))
+	} else if keyEvent.KeyVal() == keyValF2 {
+		entry.Activate()
+	}
+}
+
+func (m *MainWindow) getGTKObjects() {
+	label, err := m.helper.GetLabel("memory_label")
+	answer, err := m.helper.GetLabel("answer")
+	entry, err := m.helper.GetEntry("memory_entry")
+	image, err := m.helper.GetImage("image")
+	hint, err := m.helper.GetLabel("hint_label")
+	m.answer = answer
+	m.image = image
+	m.entry = entry
+	m.label = label
+	m.hint = hint
+
+	errorCheck(err)
 }
 
 func (m *MainWindow) getNextNumber() {
@@ -131,7 +155,7 @@ func (m *MainWindow) getNextNumber() {
 	m.hint.SetText("")
 }
 
-func (m *MainWindow) GetHint(number string) string {
+func (m *MainWindow) getHint(number string) string {
 	var result string
 	num := strings.Trim(number, " ")
 
@@ -140,13 +164,13 @@ func (m *MainWindow) GetHint(number string) string {
 			result += " : "
 		}
 		num, _ := strconv.Atoi(num[i : i+1])
-		result += m.GetMnemonicsForNumber(num)
+		result += m.getMnemonicsForNumber(num)
 	}
 
 	return "(" + result + ")"
 }
 
-func (m *MainWindow) GetMnemonicsForNumber(number int) string {
+func (m *MainWindow) getMnemonicsForNumber(number int) string {
 	switch number {
 	case 0:
 		return "S"
@@ -173,20 +197,20 @@ func (m *MainWindow) GetMnemonicsForNumber(number int) string {
 	}
 }
 
-func (m *MainWindow) GetImagePath() string {
+func (m *MainWindow) getImagePath() string {
 	length := len(strings.Trim(m.picker.current.Number, " "))
 	if length == 1 {
-		return m.GetSingleImagePath()
+		return m.getSingleImagePath()
 	} else {
-		return m.GetDoubleImagePath()
+		return m.getDoubleImagePath()
 	}
 }
 
-func (m *MainWindow) GetSingleImagePath() string {
+func (m *MainWindow) getSingleImagePath() string {
 	return fmt.Sprintf("resources/images/single/%s.png", strings.Trim(m.picker.current.Number, " "))
 }
 
-func (m *MainWindow) GetDoubleImagePath() string {
+func (m *MainWindow) getDoubleImagePath() string {
 	return fmt.Sprintf("resources/images/double/%s.png", strings.Trim(m.picker.current.Number, " "))
 }
 

@@ -15,19 +15,18 @@ type NumberPicker struct {
 }
 
 func NewNumberPicker() *NumberPicker {
-	return new(NumberPicker)
-}
+	n := new(NumberPicker)
 
-func (n *NumberPicker) Initialize() {
 	// Load PEGs
 	n.database = new(memoDatabase.Database)
 	numbers, err := n.database.GetAllNumbers()
 	errorCheck(err)
-
 	n.numbers = numbers
 
 	// Set a seed for RNG
 	rand.Seed(time.Now().UTC().UnixNano())
+
+	return n
 }
 
 func (n *NumberPicker) UpdateStatistics() {
