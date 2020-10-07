@@ -38,7 +38,7 @@
                     <property name="can_focus">False</property>
                     <property name="margin_top">10</property>
                     <property name="margin_bottom">10</property>
-                    <property name="label" translatable="yes">NUMBERS</property>
+                    <property name="label" translatable="yes">NUMBER -&gt; IMAGE</property>
                     <attributes>
                       <attribute name="font-desc" value="Sans Bold 16"/>
                     </attributes>
@@ -112,7 +112,7 @@
               </object>
               <packing>
                 <property name="name">page0</property>
-                <property name="title" translatable="yes">Name image</property>
+                <property name="title" translatable="yes">Number -&gt; Image</property>
               </packing>
             </child>
             <child>
@@ -141,6 +141,23 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_top">10</property>
+                    <property name="margin_bottom">10</property>
+                    <property name="label" translatable="yes">IMAGE -&gt; NUMBER</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Sans Bold 16"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkBox" id="page2_box_images">
                     <property name="visible">True</property>
@@ -205,7 +222,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -217,7 +234,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -228,7 +245,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -239,7 +256,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
@@ -250,13 +267,13 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
               </object>
               <packing>
                 <property name="name">page2</property>
-                <property name="title" translatable="yes">Number</property>
+                <property name="title" translatable="yes">Image -&gt; Number</property>
                 <property name="position">2</property>
               </packing>
             </child>
