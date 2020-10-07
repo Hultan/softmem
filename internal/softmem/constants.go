@@ -1,4 +1,4 @@
-package mainWindow
+package softmem
 
 const keyValF1 uint = 65470
 const keyValF2 uint = 65470

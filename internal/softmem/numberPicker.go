@@ -1,4 +1,4 @@
-package mainWindow
+package softmem
 
 import (
 	"errors"
