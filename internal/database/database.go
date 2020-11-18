@@ -20,7 +20,7 @@ func (d *Database) UpdateStatistics(number NumberTable) error {
 	return nil
 }
 
-func (d *Database) GetAllNumbers() ([]NumberTable, error) {
+func (d *Database) GetAllNumbers() (map[string]NumberTable, error) {
 	db, err := d.getDatabase()
 	if err != nil {
 		return nil, err
@@ -30,7 +30,13 @@ func (d *Database) GetAllNumbers() ([]NumberTable, error) {
 		return nil, result.Error
 	}
 
-	return numbers, nil
+	var result = make(map[string]NumberTable)
+
+	for _, v := range numbers {
+		result[v.Number] = v
+	}
+
+	return result, nil
 }
 
 func (d *Database) GetNumber(number int) (*NumberTable, error) {
@@ -61,7 +67,7 @@ func (d *Database) CloseDatabase() {
 	if d.db == nil {
 		return
 	}
-	d.db.Close()
+	_ = d.db.Close()
 	d.db = nil
 	return
 }

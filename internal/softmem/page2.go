@@ -10,8 +10,9 @@ import (
 
 type page2 struct {
 	MainForm      *MainForm
-	image         [5]*gtk.Image
-	numbers       [5]int
+	images        [5]*gtk.Image
+	lastImages    [5]*gtk.Image
+	numbers       [5]string
 	entry         *gtk.Entry
 	answer        *gtk.Label
 	correctAnswer string
@@ -34,8 +35,6 @@ func (p *page2) init() {
 	errorCheck(err)
 
 	p.loadImages()
-
-	p.correctAnswer = p.getCorrectAnswer()
 }
 
 func (p *page2) getGTKObjects() {
@@ -54,32 +53,38 @@ func (p *page2) getGTKObjects() {
 		name := fmt.Sprintf("page2_image%v", i)
 		image, err := p.MainForm.helper.GetImage(name)
 		errorCheck(err)
-		p.image[i] = image
+		p.images[i] = image
+
+		name = fmt.Sprintf("page2_last_image%v", i)
+		image, err = p.MainForm.helper.GetImage(name)
+		errorCheck(err)
+		p.lastImages[i] = image
 	}
 }
 
 func (p *page2) loadImages() {
+	p.moveImagesToLastImages()
 	var imagePath = ""
 	var number = 0
 	for i := 0; i < 5; i++ {
 		number = rand.Intn(110)
-		p.numbers[i] = number
 		if number < 10 {
 			// Get single digit path
-			imagePath = getImagePath(number)
+			p.numbers[i] = strconv.Itoa(number)
+			imagePath = getImagePathByString(p.numbers[i])
 		} else {
 			// Get double digits path
-			number = number - 10
-			p.numbers[i] = number
-			numberAsString := strconv.Itoa(number)
+			numberAsString := strconv.Itoa(number - 10)
 			if len(numberAsString) == 1 {
 				numberAsString = "0" + numberAsString
 			}
+			p.numbers[i] = numberAsString
 			imagePath = getImagePathByString(numberAsString)
 		}
-		p.image[i].SetFromFile(imagePath)
+		p.images[i].SetFromFile(imagePath)
 	}
 	p.hint.SetText("")
+	p.correctAnswer = p.getCorrectAnswer()
 }
 
 func (p *page2) onKeyPressed(entry *gtk.Entry, event *gdk.Event) {
@@ -96,10 +101,15 @@ func (p *page2) onEntryActivate(entry *gtk.Entry) {
 		// What to do here?
 	}
 	if answer == p.correctAnswer {
-		p.answer.SetText("Correct!")
+		p.answer.SetText(fmt.Sprintf("CORRECT! The following number, %v, corresponds to the following images:", answer))
 	} else {
-		p.answer.SetText(fmt.Sprintf("WRONG! Your answer was %v, the correct answer was %v", answer, p.correctAnswer))
+		p.answer.SetText(fmt.Sprintf("WRONG! Your answer was %v, the correct answer was %v:", answer, p.correctAnswer))
 	}
+
+	//answers := strings.Split(answer, " ")
+	//for _, value := range answers {
+	//	// TODO : Update statistics, correct +=1 and -=1
+	//}
 
 	p.entry.SetText("")
 	p.loadImages()
@@ -112,8 +122,14 @@ func (p *page2) getCorrectAnswer() string {
 		if len(result) > 0 {
 			result += " "
 		}
-		result += strconv.Itoa(p.numbers[i])
+		result += p.numbers[i]
 	}
 
 	return result
+}
+
+func (p *page2) moveImagesToLastImages() {
+	for i := 0; i < 5; i++ {
+		p.lastImages[i].SetFromFile(getImagePathByString(p.numbers[i]))
+	}
 }

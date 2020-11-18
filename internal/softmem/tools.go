@@ -12,10 +12,6 @@ func errorCheck(err error) {
 	}
 }
 
-func getImagePath(number int) string {
-	return getImagePathByString(strconv.Itoa(number))
-}
-
 func getImagePathByString(number string) string {
 	length := len(strings.Trim(number, " "))
 	if length == 1 {

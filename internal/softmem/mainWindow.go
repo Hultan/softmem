@@ -12,6 +12,8 @@ type MainForm struct {
 	window      *gtk.ApplicationWindow
 	helper      *gtkHelper.GtkHelper
 	soundPlayer *soundPlayer.SoundPlayer
+	picker   *NumberPicker
+
 	page0		*page0
 	//page1		*page1
 	page2		*page2
@@ -45,6 +47,10 @@ func (m *MainForm) OnActivate(app *gtk.Application) {
 	_, err = m.window.Connect("destroy", m.onCloseMainWindow)
 	errorCheck(err)
 
+	// Initialize number picker
+	picker := NewNumberPicker()
+	m.picker = picker
+
 	// Initialize page 0
 	m.page0 = NewPage0(m)
 	m.page0.init()
@@ -65,6 +71,7 @@ func (m *MainForm) OnActivate(app *gtk.Application) {
 func (m *MainForm) OnShutdown() {
 	m.window = nil
 	m.helper = nil
+	m.picker = nil
 	m.soundPlayer = nil
 
 	m.page0.onShutDown()

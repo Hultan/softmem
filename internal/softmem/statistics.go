@@ -10,8 +10,7 @@ import (
 
 type NumberPicker struct {
 	database *memoDatabase.Database
-	current  *memoDatabase.NumberTable
-	numbers  []memoDatabase.NumberTable
+	numbers  map[string]memoDatabase.NumberTable
 }
 
 func NewNumberPicker() *NumberPicker {
@@ -62,27 +61,11 @@ func (n *NumberPicker) GetNextNumber() (string, error) {
 	}
 
 	// get next number
-	length := len(values)
-	for {
-		next := rand.Intn(length)
-		nextNumber := values[next]
-		var currentNumber string
-		if n.current == nil {
-			currentNumber = ""
-		} else {
-			currentNumber = n.current.Number
-		}
-		var index = 0
-		for idx, value := range n.numbers {
-			if value.Number == nextNumber && nextNumber != currentNumber {
-				n.current = &n.numbers[idx]
-				return value.Number, nil
-			}
-			index++
-		}
+	next := rand.Intn(len(values))
+	if len(values)==0 {
+		return "", errors.New("slice is empty")
 	}
-
-	return "", errors.New("GetNextNumber failed")
+	return values[next], nil
 }
 
 func (n *NumberPicker) getCorrectStatistics() (int, int) {

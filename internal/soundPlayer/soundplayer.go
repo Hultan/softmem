@@ -28,7 +28,7 @@ func NewSoundPlayer() (*SoundPlayer, error) {
 	}
 	p.bufferIncorrect = buffer
 
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+	_ = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
 	return p, nil
 }

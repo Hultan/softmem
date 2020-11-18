@@ -8,13 +8,14 @@ import (
 )
 
 type page0 struct {
-	MainForm *MainForm
-	picker   *NumberPicker
-	answer   *gtk.Label
-	image    *gtk.Image
-	entry    *gtk.Entry
-	label    *gtk.Label
-	hint     *gtk.Label
+	MainForm      *MainForm
+	answer        *gtk.Label
+	image         *gtk.Image
+	entry         *gtk.Entry
+	label         *gtk.Label
+	hint          *gtk.Label
+	currentNumber string
+	currentWord   string
 }
 
 func NewPage0(m *MainForm) *page0 {
@@ -25,9 +26,6 @@ func NewPage0(m *MainForm) *page0 {
 
 func (p *page0) init() {
 	p.getGTKObjects()
-
-	picker := NewNumberPicker()
-	p.picker = picker
 
 	p.getNextNumber()
 
@@ -58,7 +56,7 @@ func (p *page0) getGTKObjects() {
 }
 
 func (p *page0) getNextNumber() {
-	next, err := p.picker.GetNextNumber()
+	next, err := p.MainForm.picker.GetNextNumber()
 	if err != nil {
 		panic(err)
 	}
@@ -71,22 +69,28 @@ func (p *page0) onEntryActivate() {
 
 	text, err := p.entry.GetText()
 	errorCheck(err)
-	if strings.ToLower(p.picker.current.Word) == strings.ToLower(text) {
-		result = fmt.Sprintf("CORRECT : %s = %s", p.picker.current.Number, p.picker.current.Word)
-		p.picker.current.Correct += 1
+	if strings.ToLower(p.currentWord) == strings.ToLower(text) {
+		result = fmt.Sprintf("CORRECT : %s = %s", p.currentNumber, p.currentWord)
+
+		// TODO : Update statistics, Correct += 1
+
 		// Ignore sound errors
 		_ = p.MainForm.soundPlayer.PlayCorrect()
 	} else {
-		result = fmt.Sprintf("WRONG : %s = %s", p.picker.current.Number, p.picker.current.Word)
-		p.picker.current.Correct -= 1
+		result = fmt.Sprintf("WRONG : %s = %s", p.currentNumber, p.currentWord)
+
+		// TODO : Update statistics, Correct -= 1
+
 		// Ignore sound errors
 		_ = p.MainForm.soundPlayer.PlayIncorrect()
 	}
-	p.picker.current.HasChanged = true
+	// TODO : Set has changed
+	//p.MainForm.picker.current.HasChanged = true
+
 	p.answer.SetText(result)
 	p.entry.SetText("")
 
-	p.image.SetFromFile(getImagePathByString(p.picker.current.Number))
+	p.image.SetFromFile(getImagePathByString(p.currentNumber))
 
 	p.getNextNumber()
 }
@@ -95,14 +99,13 @@ func (p *page0) onKeyPressed(entry *gtk.Entry, event *gdk.Event) {
 	keyEvent := gdk.EventKeyNewFromEvent(event)
 
 	if keyEvent.KeyVal() == keyValF1 {
-		p.hint.SetText(getHint(p.picker.current.Number))
+		p.hint.SetText(getHint(p.currentNumber))
 	} else if keyEvent.KeyVal() == keyValF2 {
 		entry.Activate()
 	}
 }
 
 func (p *page0) onShutDown() {
-	p.picker = nil
 	p.answer = nil
 	p.entry = nil
 	p.label = nil
@@ -111,5 +114,5 @@ func (p *page0) onShutDown() {
 }
 
 func (p *page0) onCloseMainWindow() {
-	p.picker.UpdateStatistics()
+	p.MainForm.picker.UpdateStatistics()
 }
