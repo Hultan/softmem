@@ -38,12 +38,9 @@ func (p *page2) init() {
 }
 
 func (p *page2) getGTKObjects() {
-	entry, err := p.MainForm.helper.GetEntry("page2_entry_answer")
-	errorCheck(err)
-	answer, err := p.MainForm.helper.GetLabel("page2_label_answer")
-	errorCheck(err)
-	hint, err := p.MainForm.helper.GetLabel("page2_label_hint")
-	errorCheck(err)
+	entry := p.MainForm.builder.getObject("page2_entry_answer").(*gtk.Entry)
+	answer := p.MainForm.builder.getObject("page2_label_answer").(*gtk.Label)
+	hint := p.MainForm.builder.getObject("page2_label_hint").(*gtk.Label)
 
 	p.entry = entry
 	p.answer = answer
@@ -51,13 +48,11 @@ func (p *page2) getGTKObjects() {
 
 	for i := 0; i < 5; i++ {
 		name := fmt.Sprintf("page2_image%v", i)
-		image, err := p.MainForm.helper.GetImage(name)
-		errorCheck(err)
+		image := p.MainForm.builder.getObject(name).(*gtk.Image)
 		p.images[i] = image
 
 		name = fmt.Sprintf("page2_last_image%v", i)
-		image, err = p.MainForm.helper.GetImage(name)
-		errorCheck(err)
+		image = p.MainForm.builder.getObject(name).(*gtk.Image)
 		p.lastImages[i] = image
 	}
 }

@@ -37,16 +37,11 @@ func (p *page0) init() {
 }
 
 func (p *page0) getGTKObjects() {
-	label, err := p.MainForm.helper.GetLabel("page0_label_memory")
-	errorCheck(err)
-	answer, err := p.MainForm.helper.GetLabel("page0_label_answer")
-	errorCheck(err)
-	entry, err := p.MainForm.helper.GetEntry("page0_entry_answer")
-	errorCheck(err)
-	image, err := p.MainForm.helper.GetImage("page0_image")
-	errorCheck(err)
-	hint, err := p.MainForm.helper.GetLabel("page0_label_hint")
-	errorCheck(err)
+	label := p.MainForm.builder.getObject("page0_label_memory").(*gtk.Label)
+	answer := p.MainForm.builder.getObject("page0_label_answer").(*gtk.Label)
+	entry := p.MainForm.builder.getObject("page0_entry_answer").(*gtk.Entry)
+	image := p.MainForm.builder.getObject("page0_image").(*gtk.Image)
+	hint := p.MainForm.builder.getObject("page0_label_hint").(*gtk.Label)
 
 	p.answer = answer
 	p.image = image
@@ -60,8 +55,10 @@ func (p *page0) getNextNumber() {
 	if err != nil {
 		panic(err)
 	}
-	p.label.SetText(fmt.Sprintf("%s", next))
+	p.label.SetText(fmt.Sprintf("%s", next.Number))
 	p.hint.SetText("")
+	p.currentNumber = next.Number
+	p.currentWord = next.Word
 }
 
 func (p *page0) onEntryActivate() {
@@ -75,14 +72,14 @@ func (p *page0) onEntryActivate() {
 		// TODO : Update statistics, Correct += 1
 
 		// Ignore sound errors
-		_ = p.MainForm.soundPlayer.PlayCorrect()
+		//_ = p.MainForm.soundPlayer.PlayCorrect()
 	} else {
 		result = fmt.Sprintf("WRONG : %s = %s", p.currentNumber, p.currentWord)
 
 		// TODO : Update statistics, Correct -= 1
 
 		// Ignore sound errors
-		_ = p.MainForm.soundPlayer.PlayIncorrect()
+		//_ = p.MainForm.soundPlayer.PlayIncorrect()
 	}
 	// TODO : Set has changed
 	//p.MainForm.picker.current.HasChanged = true

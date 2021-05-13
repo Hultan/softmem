@@ -50,7 +50,7 @@ func (n *NumberPicker) limit(number int) int {
 	return number
 }
 
-func (n *NumberPicker) GetNextNumber() (string, error) {
+func (n *NumberPicker) GetNextNumber() (memoDatabase.NumberTable, error) {
 	_, low := n.getCorrectStatistics()
 	var values []string
 	for _, item := range n.numbers {
@@ -63,9 +63,10 @@ func (n *NumberPicker) GetNextNumber() (string, error) {
 	// get next number
 	next := rand.Intn(len(values))
 	if len(values)==0 {
-		return "", errors.New("slice is empty")
+		return memoDatabase.NumberTable{}, errors.New("slice is empty")
 	}
-	return values[next], nil
+	number := n.numbers[values[next]]
+	return number, nil
 }
 
 func (n *NumberPicker) getCorrectStatistics() (int, int) {

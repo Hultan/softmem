@@ -2,21 +2,19 @@ package softmem
 
 import (
 	"github.com/gotk3/gotk3/gtk"
-	soundPlayer "github.com/hultan/softmem/internal/soundPlayer"
-	gtkHelper "github.com/hultan/softteam-tools/pkg/gtk-helper"
-	"github.com/hultan/softteam/messagebox"
+	//soundPlayer "github.com/hultan/softmem/internal/soundPlayer"
 	"os"
 )
 
 type MainForm struct {
 	window      *gtk.ApplicationWindow
-	helper      *gtkHelper.GtkHelper
-	soundPlayer *soundPlayer.SoundPlayer
-	picker   *NumberPicker
+	builder     *SoftBuilder
+	//soundPlayer *soundPlayer.SoundPlayer
+	picker      *NumberPicker
 
-	page0		*page0
+	page0 *page0
 	//page1		*page1
-	page2		*page2
+	page2 *page2
 }
 
 func NewMainWindow() *MainForm {
@@ -29,22 +27,20 @@ func (m *MainForm) OnStartup() {
 	gtk.Init(&os.Args)
 
 	// Create a new gtk helper
-	m.helper = gtkHelper.GtkHelperNewFromFile("main.glade")
+	m.builder = newSoftBuilder("main.glade")
 }
 
 func (m *MainForm) OnActivate(app *gtk.Application) {
 	// Get the main window from the glade file
-	mainWindow, err := m.helper.GetApplicationWindow("main_window")
-	errorCheck(err)
-	m.window = mainWindow
+	m.window = m.builder.getObject("main_window").(*gtk.ApplicationWindow)
 
 	// Set up main window
-	mainWindow.SetApplication(app)
-	mainWindow.SetTitle(applicationTitle)
-	mainWindow.SetDefaultSize(800, 600)
+	m.window.SetApplication(app)
+	m.window.SetTitle(applicationTitle)
+	m.window.SetDefaultSize(800, 600)
 
 	// Hook up the destroy event
-	_, err = m.window.Connect("destroy", m.onCloseMainWindow)
+	_, err := m.window.Connect("destroy", m.onCloseMainWindow)
 	errorCheck(err)
 
 	// Initialize number picker
@@ -60,27 +56,27 @@ func (m *MainForm) OnActivate(app *gtk.Application) {
 	m.page2.init()
 
 	// Initialize sound player
-	player, err := soundPlayer.NewSoundPlayer()
-	errorCheck(err)
-	m.soundPlayer = player
+	//player, err := soundPlayer.NewSoundPlayer()
+	//errorCheck(err)
+	//m.soundPlayer = player
 
 	// Show the main window
-	mainWindow.ShowAll()
+	m.window.ShowAll()
 }
 
 func (m *MainForm) OnShutdown() {
 	m.window = nil
-	m.helper = nil
+	m.builder = nil
 	m.picker = nil
-	m.soundPlayer = nil
+	//m.soundPlayer = nil
 
 	m.page0.onShutDown()
 }
 
 func (m *MainForm) onCloseMainWindow() {
 
-	buttons := []messagebox.Button{{"Absolutely!", gtk.RESPONSE_OK}, {"Hell no!", gtk.RESPONSE_CANCEL}}
-	box2 := messagebox.NewMessageBoxWithButtons("Update statistics?", "Do you want to update statistics?", m.window, buttons)
+	buttons := []Button{{"Absolutely!", gtk.RESPONSE_OK}, {"Hell no!", gtk.RESPONSE_CANCEL}}
+	box2 := NewMessageBoxWithButtons("Update statistics?", "Do you want to update statistics?", m.window, buttons)
 
 	if box2.Warning() == gtk.RESPONSE_OK {
 		m.page0.onCloseMainWindow()
@@ -90,5 +86,5 @@ func (m *MainForm) onCloseMainWindow() {
 	//	m.picker.UpdateStatistics()
 	//}
 
-	m.soundPlayer.Close()
+	//m.soundPlayer.Close()
 }
