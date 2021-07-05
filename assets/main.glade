@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.36.0 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="box_main">
         <property name="visible">True</property>
@@ -13,7 +16,6 @@
           <object class="GtkStackSwitcher" id="stack_switcher">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="homogeneous">True</property>
             <property name="stack">stack</property>
           </object>
           <packing>
@@ -40,7 +42,7 @@
                     <property name="margin_bottom">10</property>
                     <property name="label" translatable="yes">NUMBER -&gt; IMAGE</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans Bold 16"/>
+                      <attribute name="font-desc" value="Sans Bold 24"/>
                     </attributes>
                   </object>
                   <packing>
@@ -54,6 +56,10 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">number to memo</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Sans Bold 18"/>
+                      <attribute name="foreground" value="#20204a4a8787"/>
+                    </attributes>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -149,7 +155,7 @@
                     <property name="margin_bottom">10</property>
                     <property name="label" translatable="yes">IMAGE -&gt; NUMBER</property>
                     <attributes>
-                      <attribute name="font-desc" value="Sans Bold 16"/>
+                      <attribute name="font-desc" value="Sans Bold 24"/>
                     </attributes>
                   </object>
                   <packing>
@@ -165,6 +171,8 @@
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkImage" id="page2_image0">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -176,6 +184,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_image1">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -187,6 +197,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_image2">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -198,6 +210,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_image3">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -209,6 +223,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_image4">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -277,6 +293,8 @@
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkImage" id="page2_last_image0">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -288,6 +306,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_last_image1">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -299,6 +319,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_last_image2">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -310,6 +332,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_last_image3">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -321,6 +345,8 @@
                     </child>
                     <child>
                       <object class="GtkImage" id="page2_last_image4">
+                        <property name="width_request">200</property>
+                        <property name="height_request">200</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -352,9 +378,6 @@
           </packing>
         </child>
       </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
     </child>
   </object>
 </interface>

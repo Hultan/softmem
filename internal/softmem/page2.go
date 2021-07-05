@@ -77,6 +77,7 @@ func (p *page2) loadImages() {
 			imagePath = getImagePathByString(numberAsString)
 		}
 		p.images[i].SetFromFile(imagePath)
+
 	}
 	p.hint.SetText("")
 	p.correctAnswer = p.getCorrectAnswer()
