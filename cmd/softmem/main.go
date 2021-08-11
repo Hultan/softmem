@@ -18,12 +18,9 @@ func main() {
 	mainWindow := softmem.NewMainWindow()
 
 	// Hook up the activate event handler
-	_, err = app.Connect("startup", mainWindow.OnStartup)
-	errorCheck(err)
-	_, err = app.Connect("activate", mainWindow.OnActivate)
-	errorCheck(err)
-	_, err = app.Connect("shutdown", mainWindow.OnShutdown)
-	errorCheck(err)
+	_ = app.Connect("startup", mainWindow.OnStartup)
+	_ = app.Connect("activate", mainWindow.OnActivate)
+	_ = app.Connect("shutdown", mainWindow.OnShutdown)
 
 	// Start the application
 	status := app.Run(os.Args)

@@ -28,11 +28,8 @@ func NewPage2(m *MainForm) *page2 {
 func (p *page2) init() {
 	p.getGTKObjects()
 
-	_, err := p.entry.Connect("activate", p.onEntryActivate)
-	errorCheck(err)
-
-	_, err = p.entry.Connect("key-press-event", p.onKeyPressed)
-	errorCheck(err)
+	_= p.entry.Connect("activate", p.onEntryActivate)
+	_ = p.entry.Connect("key-press-event", p.onKeyPressed)
 
 	p.loadImages()
 }

@@ -29,10 +29,8 @@ func (p *page0) init() {
 
 	p.getNextNumber()
 
-	_, err := p.entry.Connect("activate", p.onEntryActivate)
-	errorCheck(err)
-	_, err = p.entry.Connect("key-press-event", p.onKeyPressed)
-	errorCheck(err)
+	_ = p.entry.Connect("activate", p.onEntryActivate)
+	_ = p.entry.Connect("key-press-event", p.onKeyPressed)
 	p.entry.GrabFocus()
 }
 

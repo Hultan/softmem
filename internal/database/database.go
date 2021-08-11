@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+	"github.com/hultan/softteam/framework"
 	"github.com/jinzhu/gorm"
 )
 import _ "github.com/go-sql-driver/mysql"
@@ -54,7 +56,12 @@ func (d *Database) GetNumber(number int) (*NumberTable, error) {
 
 func (d *Database) getDatabase() (*gorm.DB, error) {
 	if d.db == nil {
-	db, err := gorm.Open(databaseName, connectionString)
+		fw := framework.NewFramework()
+		server, err := fw.IO.ReadAllText("config/.credentials")
+		if err != nil {
+			panic(err)
+		}
+		db, err := gorm.Open(databaseName, fmt.Sprintf(connectionString, server))
 		if err != nil {
 			return nil, err
 		}

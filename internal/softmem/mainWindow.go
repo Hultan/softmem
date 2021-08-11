@@ -1,6 +1,7 @@
 package softmem
 
 import (
+	"fmt"
 	"github.com/gotk3/gotk3/gtk"
 	//soundPlayer "github.com/hultan/softmem/internal/soundPlayer"
 	"os"
@@ -36,12 +37,11 @@ func (m *MainForm) OnActivate(app *gtk.Application) {
 
 	// Set up main window
 	m.window.SetApplication(app)
-	m.window.SetTitle(applicationTitle)
+	m.window.SetTitle(fmt.Sprintf("%s - %s", applicationName, applicationVersion))
 	m.window.SetDefaultSize(800, 600)
 
 	// Hook up the destroy event
-	_, err := m.window.Connect("destroy", m.onCloseMainWindow)
-	errorCheck(err)
+	_ = m.window.Connect("destroy", m.onCloseMainWindow)
 
 	// Initialize number picker
 	picker := NewNumberPicker()

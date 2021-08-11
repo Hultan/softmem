@@ -1,9 +1,10 @@
 package softmem
 
+const applicationName = "SoftMemo"
+const applicationVersion = "1.1.0"
+
 const keyValF1 uint = 65470
 const keyValF2 uint = 65470
-
-const applicationTitle string = "SoftTeam Memo v. 1.0"
 
 const MaxUint = ^uint(0)
 //const MinUint = 0
