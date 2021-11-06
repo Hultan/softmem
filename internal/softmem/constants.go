@@ -1,7 +1,7 @@
 package softmem
 
 const applicationName = "SoftMemo"
-const applicationVersion = "1.1.0"
+const applicationVersion = "1.1.1"
 
 const keyValF1 uint = 65470
 const keyValF2 uint = 65470

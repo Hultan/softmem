@@ -1,6 +1,6 @@
 module github.com/hultan/softmem
 
-go 1.15
+go 1.17
 
 require (
 	github.com/faiface/beep v1.0.2
