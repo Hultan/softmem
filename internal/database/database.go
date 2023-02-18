@@ -2,10 +2,13 @@ package database
 
 import (
 	"fmt"
+
+	"gorm.io/driver/mysql"
+	_ "gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
 	"github.com/hultan/softteam/framework"
-	"github.com/jinzhu/gorm"
 )
-import _ "github.com/go-sql-driver/mysql"
 
 type Database struct {
 	db *gorm.DB
@@ -61,7 +64,8 @@ func (d *Database) getDatabase() (*gorm.DB, error) {
 		if err != nil {
 			panic(err)
 		}
-		db, err := gorm.Open(databaseName, fmt.Sprintf(connectionString, server))
+		// db, err := gorm.Open(databaseName, fmt.Sprintf(connectionString, server))
+		db, err := gorm.Open(mysql.Open(fmt.Sprintf(connectionString, server)), &gorm.Config{})
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +78,8 @@ func (d *Database) CloseDatabase() {
 	if d.db == nil {
 		return
 	}
-	_ = d.db.Close()
+	sqlDb, _ := d.db.DB()
+	_ = sqlDb.Close()
 	d.db = nil
 	return
 }
